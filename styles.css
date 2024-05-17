@@ -21,6 +21,11 @@ main {
 #balance-container {
   margin-bottom: 20px;
   text-align: center;
+  border: 2px solid blue;
+  border-radius: 5px;
+  padding: 20px;
+  width: 300px;
+  margin: 20px auto;
 }
 
 #balance-container label {
@@ -62,6 +67,7 @@ button {
   color: white;
   border: none;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
 button:hover {
@@ -71,4 +77,38 @@ button:hover {
 #balance-message {
   margin-top: 20px;
   font-weight: bold;
+}
+
+input[type="text"] {
+  width: calc(100% - 20px);
+  /* Esto hace que el ancho del input sea igual al ancho del contenedor - 20px de margen */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+input[type="number"] {
+  width: calc(100% - 20px);
+  /* Esto hace que el ancho del input sea igual al ancho del contenedor - 20px de margen */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.header {
+  text-align: center;
+}
+
+.red {
+  color: red;
+  margin-right: 5px;
+  vertical-align: top;
+}
+
+.green {
+  color: green;
+  margin-right: 5px;
+  vertical-align: top;
 }

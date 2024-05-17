@@ -6,28 +6,88 @@
     <title>Monitoring of budget</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
+
   <body>
     <header>
       <img src="logo.webp" alt="Mylogo" />
     </header>
     <main>
+      <div class="header">
+        <span>My budget:</span>
+      </div>
       <div id="balance-container">
-        <label for="balance">Me budget:</label>
-        <input type="number" id="balance" min="0" placeholder="Enter amount" />
+        <div id="balance-message"></div>
       </div>
       <div id="income-expense-container">
         <div id="income">
-          <h2>Incomings</h2>
-          <ul id="income-list"></ul>
-          <button id="add-income">Add</button>
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3">
+                  <h2>Incomings</h2>
+                </th>
+              </tr>
+              <tr>
+                <th>
+                  <input
+                    type="text"
+                    id="txtIncomeDescription"
+                    placeholder="Description"
+                  />
+                </th>
+                <th>
+                  <input
+                    type="number"
+                    id="txtIncomeValue"
+                    placeholder="Amount"
+                  />
+                </th>
+                <th>
+                  <button id="btnAdd">Save</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="tblIncome"></tbody>
+          </table>
+          <div class="row green">
+            <p>The sum of Incomes <span id="SumIncome">0.00</span></p>
+          </div>
         </div>
         <div id="expense">
-          <h2>Outcomings</h2>
-          <ul id="expense-list"></ul>
-          <button id="add-expense">Add</button>
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3">
+                  <h2>Outcomings</h2>
+                </th>
+              </tr>
+              <tr>
+                <th>
+                  <input
+                    type="text"
+                    id="txtOutcomeDescription"
+                    placeholder="Description"
+                  />
+                </th>
+                <th>
+                  <input
+                    type="number"
+                    id="txtOutcomeValue"
+                    placeholder="Amount"
+                  />
+                </th>
+                <th>
+                  <button id="btnRest">Save</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="tblOutcome"></tbody>
+          </table>
+          <div class="row red">
+            <p>The sum of Outcomes <span id="SumOutcome">0.00</span></p>
+          </div>
         </div>
       </div>
-      <div id="balance-message"></div>
     </main>
     <script src="script.js"></script>
   </body>

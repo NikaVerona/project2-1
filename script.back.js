@@ -1,31 +1,20 @@
+const movements = [];
+idEdit = "";
+
 const Movement = {
   id: "",
   description: "",
   amount: 0,
   category: "",
 };
-const movements = [];
-idEdit = "";
 
-document.addEventListener("DOMContentLoaded", function () {
-  const inBtn = document.getElementById("btnAdd");
-  const outBtn = document.getElementById("btnRest");
-
-  outBtn.addEventListener("click", function () {
-    saveMov("Outcome");
-  });
-  inBtn.addEventListener("click", function () {
-    saveMov("Income");
-  });
-
-  function saveMov(category) {
-    if (idEdit != "") {
-      modifyRow();
-    } else {
-      addRow(category);
-    }
+function saveMov(category) {
+  if (idEdit != "") {
+    modifyRow();
+  } else {
+    addRow(category);
   }
-});
+}
 
 function addRow(category) {
   const txtDescription = document.getElementById(`txt${category}Description`);
@@ -98,41 +87,29 @@ function refreshTable(category) {
   const sumaSpan = document.getElementById(`Sum${category}`);
 
   var total = 0;
-  tblValues.textContent = "";
-  sumaSpan.textContent = "";
+  tblValues.innerHTML = "";
+  sumaSpan.innerHTML = "";
 
   movements
     .filter((mov) => mov.category === category)
     .forEach((mov) => {
       total = total + parseFloat(mov.amount);
       const newRow = document.createElement("tr");
-      const descriptionCell = document.createElement("td");
-      descriptionCell.textContent = mov.description;
-      const amountCell = document.createElement("td");
-      amountCell.textContent = mov.amount;
-      const actionsCell = document.createElement("td");
-      const editButton = document.createElement("button");
-      editButton.textContent = "Edit";
-      editButton.addEventListener("click", () => editRow(mov.id, category));
-
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
-      deleteButton.addEventListener("click", () => deleteRow(mov.id));
-
-      actionsCell.appendChild(editButton);
-      actionsCell.appendChild(deleteButton);
-
-      newRow.appendChild(descriptionCell);
-      newRow.appendChild(amountCell);
-      newRow.appendChild(actionsCell);
+      newRow.innerHTML = `
+                                    <td>${mov.description}</td>
+                                    <td>${mov.amount}</td>
+                                    <td>
+                                        <button onclick="editRow(${mov.id},'${category}')">Edit</button>
+                                        <button onclick="deleteRow(${mov.id})">Delete</button>
+                                    </td>`;
       tblValues.appendChild(newRow);
     });
-  sumaSpan.textContent = total;
+  sumaSpan.innerHTML = total;
 }
 function totalHeader() {
   const pSum = document.getElementById(`balance-message`);
   var totalSum = 0;
-  pSum.textContent = "";
+  pSum.innerHTML = "";
   var myClass = "";
   movements.forEach((mov) => {
     if (mov.category === "Income") {
@@ -143,14 +120,14 @@ function totalHeader() {
     }
   });
   if (totalSum > 0) {
-    pSum.textContent = `You can still spend  ${totalSum.toFixed(2)} PLN`;
+    pSum.innerHTML = `You can still spend  ${totalSum.toFixed(2)} PLN`;
     myClass = "green";
   }
   if (totalSum === 0) {
-    pSum.textContent = `Balance is zero`;
+    pSum.innerHTML = `Balance is zero`;
   }
   if (totalSum < 0) {
-    pSum.textContent = `The balance is negative. You lost ${Math.abs(
+    pSum.innerHTML = `The balance is negative. You lost ${Math.abs(
       totalSum.toFixed(2)
     )} PLN`;
     myClass = "red";
