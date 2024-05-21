@@ -1,41 +1,48 @@
-const Movement = {
-  id: "",
-  description: "",
-  amount: 0,
-  category: "",
-};
 const movements = [];
 idEdit = "";
 
 document.addEventListener("DOMContentLoaded", function () {
   const inBtn = document.getElementById("btnAdd");
   const outBtn = document.getElementById("btnRest");
+  const formEdit = document.getElementById("formEdit");
 
   outBtn.addEventListener("click", function () {
-    saveMov("Outcome");
+    addRow("Outcome");
   });
   inBtn.addEventListener("click", function () {
-    saveMov("Income");
+    addRow("Income");
   });
+  formEdit.addEventListener("submit", function (event) {
+    event.preventDefault();
 
-  function saveMov(category) {
-    if (idEdit != "") {
-      modifyRow();
-    } else {
-      addRow(category);
-    }
-  }
+    modifyRow();
+  });
 });
 
 function addRow(category) {
   const txtDescription = document.getElementById(`txt${category}Description`);
   const txtAmount = document.getElementById(`txt${category}Value`);
 
-  const mov = Object.create(Movement);
-  mov.description = txtDescription.value;
-  mov.amount = txtAmount.value;
-  mov.id = Date.now();
-  mov.category = category;
+  if (txtDescription.value === "") {
+    alert("Please fill the Description");
+    return false;
+  }
+  if (txtAmount.value === "") {
+    alert("Please fill the field Amount");
+    return false;
+  }
+  if (isNaN(txtAmount.value) || parseFloat(txtAmount.value) < 0) {
+    alert("Please only positive values");
+    return false;
+  }
+
+  var mov = {
+    description: txtDescription.value,
+    amount: txtAmount.value,
+    id: Date.now(),
+    category: category,
+  };
+
   movements.push(mov);
   refreshTable(category);
   emptyValues(category);
@@ -49,31 +56,74 @@ function emptyValues(category) {
   txtAmount.value = "";
   idEdit = "";
 }
+function isValid(category) {
+  const txtDescription = document.getElementById(`txt${category}Description`);
+  const txtAmount = document.getElementById(`txt${category}Value`);
+
+  if (txtDescription.value === "") {
+    alert("Please fill the Description");
+    return false;
+  }
+  if (txtAmount.value === "") {
+    alert("Please fill the field Amount");
+    return false;
+  }
+  return true;
+}
 function modifyRow() {
   const mov = movements.find((movimiento) => movimiento.id === idEdit);
-  const txtDescription = document.getElementById(
-    `txt${mov.category}Description`
-  );
-  const txtAmount = document.getElementById(`txt${mov.category}Value`);
+  const txtDescription = document.getElementById(`txtEditDescription`);
+  const txtAmount = document.getElementById(`txtEditValue`);
+
+  if (txtDescription.value === "") {
+    alert("Please fill the Description");
+    return false;
+  }
+  if (txtAmount.value === "") {
+    alert("Please fill the field Amount");
+    return false;
+  }
+  if (isNaN(txtAmount.value) || parseFloat(txtAmount.value) < 0) {
+    alert("Please only positive values");
+    return false;
+  }
 
   mov.description = txtDescription.value;
   mov.amount = txtAmount.value;
   refreshTable(mov.category);
   emptyValues(mov.category);
   totalHeader();
+
+  var modal = document.getElementById("myModal");
+
+  var btn = document.getElementById("openModal");
+
+  var span = document.getElementsByClassName("close")[0];
+
+  modal.style.display = "none";
 }
 
 function editRow(id) {
   const mov = movements.find((movimiento) => movimiento.id === id);
 
-  const txtDescription = document.getElementById(
-    `txt${mov.category}Description`
-  );
-  const txtAmount = document.getElementById(`txt${mov.category}Value`);
+  const txtDescription = document.getElementById(`txtEditDescription`);
+  const txtAmount = document.getElementById(`txtEditValue`);
 
   txtDescription.value = mov.description;
   txtAmount.value = mov.amount;
   idEdit = mov.id;
+
+  var modal = document.getElementById("myModal");
+
+  var btn = document.getElementById("openModal");
+
+  var span = document.getElementsByClassName("close")[0];
+
+  modal.style.display = "block";
+
+  span.onclick = function () {
+    modal.style.display = "none";
+  };
 }
 function deleteRow(id) {
   const category = movements.find((mov) => mov.id === id).category;
@@ -84,7 +134,6 @@ function deleteRow(id) {
 
   if (index !== -1 && confirmation) {
     movements.splice(index, 1);
-    // console.log('Delete Movement');
     refreshTable(category);
     emptyValues(category);
     totalHeader();

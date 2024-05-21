@@ -73,7 +73,6 @@ function deleteRow(id) {
 
   if (index !== -1 && confirmation) {
     movements.splice(index, 1);
-    // console.log('Delete Movement');
     refreshTable(category);
     emptyValues(category);
     totalHeader();
