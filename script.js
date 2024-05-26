@@ -1,20 +1,23 @@
 const movements = [];
-idEdit = "";
+let idEdit = "";
 
 document.addEventListener("DOMContentLoaded", function () {
-  const inBtn = document.getElementById("btnAdd");
-  const outBtn = document.getElementById("btnRest");
+  const formIncome = document.getElementById("formIncome");
+  const formOutcome = document.getElementById("formOutcome");
   const formEdit = document.getElementById("formEdit");
 
-  outBtn.addEventListener("click", function () {
-    addRow("Outcome");
-  });
-  inBtn.addEventListener("click", function () {
+  formIncome.addEventListener("submit", function (event) {
+    event.preventDefault();
     addRow("Income");
   });
+
+  formOutcome.addEventListener("submit", function (event) {
+    event.preventDefault();
+    addRow("Outcome");
+  });
+
   formEdit.addEventListener("submit", function (event) {
     event.preventDefault();
-
     modifyRow();
   });
 });
@@ -23,22 +26,14 @@ function addRow(category) {
   const txtDescription = document.getElementById(`txt${category}Description`);
   const txtAmount = document.getElementById(`txt${category}Value`);
 
-  if (txtDescription.value === "") {
-    alert("Please fill the Description");
-    return false;
-  }
-  if (txtAmount.value === "") {
-    alert("Please fill the field Amount");
-    return false;
-  }
-  if (isNaN(txtAmount.value) || parseFloat(txtAmount.value) < 0) {
-    alert("Please only positive values");
-    return false;
+  if (txtDescription.value === "" || txtAmount.value === "" || isNaN(txtAmount.value) || parseFloat(txtAmount.value) < 0) {
+    alert("Please fill out all fields with valid values.");
+    return;
   }
 
-  var mov = {
+  const mov = {
     description: txtDescription.value,
-    amount: txtAmount.value,
+    amount: parseFloat(txtAmount.value),
     id: Date.now(),
     category: category,
   };
@@ -48,6 +43,7 @@ function addRow(category) {
   emptyValues(category);
   totalHeader();
 }
+
 function emptyValues(category) {
   const txtDescription = document.getElementById(`txt${category}Description`);
   const txtAmount = document.getElementById(`txt${category}Value`);
@@ -56,157 +52,105 @@ function emptyValues(category) {
   txtAmount.value = "";
   idEdit = "";
 }
-function isValid(category) {
-  const txtDescription = document.getElementById(`txt${category}Description`);
-  const txtAmount = document.getElementById(`txt${category}Value`);
 
-  if (txtDescription.value === "") {
-    alert("Please fill the Description");
-    return false;
-  }
-  if (txtAmount.value === "") {
-    alert("Please fill the field Amount");
-    return false;
-  }
-  return true;
-}
 function modifyRow() {
   const mov = movements.find((movimiento) => movimiento.id === idEdit);
-  const txtDescription = document.getElementById(`txtEditDescription`);
-  const txtAmount = document.getElementById(`txtEditValue`);
+  const txtDescription = document.getElementById("txtEditDescription");
+  const txtAmount = document.getElementById("txtEditValue");
 
-  if (txtDescription.value === "") {
-    alert("Please fill the Description");
-    return false;
-  }
-  if (txtAmount.value === "") {
-    alert("Please fill the field Amount");
-    return false;
-  }
-  if (isNaN(txtAmount.value) || parseFloat(txtAmount.value) < 0) {
-    alert("Please only positive values");
-    return false;
+  if (txtDescription.value === "" || txtAmount.value === "" || isNaN(txtAmount.value) || parseFloat(txtAmount.value) < 0) {
+    alert("Please fill out all fields with valid values.");
+    return;
   }
 
   mov.description = txtDescription.value;
-  mov.amount = txtAmount.value;
+  mov.amount = parseFloat(txtAmount.value);
   refreshTable(mov.category);
   emptyValues(mov.category);
   totalHeader();
 
-  var modal = document.getElementById("myModal");
-
-  var btn = document.getElementById("openModal");
-
-  var span = document.getElementsByClassName("close")[0];
-
+  const modal = document.getElementById("myModal");
   modal.style.display = "none";
 }
 
 function editRow(id) {
   const mov = movements.find((movimiento) => movimiento.id === id);
-
-  const txtDescription = document.getElementById(`txtEditDescription`);
-  const txtAmount = document.getElementById(`txtEditValue`);
+  const txtDescription = document.getElementById("txtEditDescription");
+  const txtAmount = document.getElementById("txtEditValue");
 
   txtDescription.value = mov.description;
   txtAmount.value = mov.amount;
   idEdit = mov.id;
 
-  var modal = document.getElementById("myModal");
-
-  var btn = document.getElementById("openModal");
-
-  var span = document.getElementsByClassName("close")[0];
-
+  const modal = document.getElementById("myModal");
   modal.style.display = "block";
 
+  const span = document.getElementsByClassName("close")[0];
   span.onclick = function () {
     modal.style.display = "none";
   };
-}
-function deleteRow(id) {
-  const category = movements.find((mov) => mov.id === id).category;
-  const index = movements.findIndex((mov) => mov.id === id);
-  const confirmation = confirm(
-    "¿Are you sure that you want to delete the register?"
-  );
 
-  if (index !== -1 && confirmation) {
-    movements.splice(index, 1);
-    refreshTable(category);
-    emptyValues(category);
-    totalHeader();
-  } else {
-    console.log("We cannot find any register with that ID");
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  };
+}
+
+function deleteRow(id) {
+  const movIndex = movements.findIndex((movimiento) => movimiento.id === id);
+  if (movIndex !== -1) {
+    movements.splice(movIndex, 1);
   }
+  refreshTable();
+  totalHeader();
 }
 
 function refreshTable(category) {
-  const tblValues = document.getElementById(`tbl${category}`);
-  const sumaSpan = document.getElementById(`Sum${category}`);
-
-  var total = 0;
-  tblValues.textContent = "";
-  sumaSpan.textContent = "";
-
+  const tbl = document.getElementById(`tbl${category}`);
+  tbl.innerHTML = "";
   movements
-    .filter((mov) => mov.category === category)
-    .forEach((mov) => {
-      total = total + parseFloat(mov.amount);
-      const newRow = document.createElement("tr");
-      const descriptionCell = document.createElement("td");
-      descriptionCell.textContent = mov.description;
-      const amountCell = document.createElement("td");
-      amountCell.textContent = mov.amount;
-      const actionsCell = document.createElement("td");
-      const editButton = document.createElement("button");
-      editButton.textContent = "Edit";
-      editButton.addEventListener("click", () => editRow(mov.id, category));
+    .filter((movimiento) => movimiento.category === category)
+    .forEach((movimiento) => {
+      const row = tbl.insertRow();
+      row.insertCell().appendChild(document.createTextNode(movimiento.description));
+      row.insertCell().appendChild(document.createTextNode(movimiento.amount.toFixed(2)));
 
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
-      deleteButton.addEventListener("click", () => deleteRow(mov.id));
+      const cell = row.insertCell();
+      const btnEdit = document.createElement("button");
+      btnEdit.innerHTML = "Edit";
+      btnEdit.onclick = function () {
+        editRow(movimiento.id);
+      };
 
-      actionsCell.appendChild(editButton);
-      actionsCell.appendChild(deleteButton);
+      const btnDelete = document.createElement("button");
+      btnDelete.innerHTML = "Delete";
+      btnDelete.onclick = function () {
+        deleteRow(movimiento.id);
+      };
 
-      newRow.appendChild(descriptionCell);
-      newRow.appendChild(amountCell);
-      newRow.appendChild(actionsCell);
-      tblValues.appendChild(newRow);
+      cell.appendChild(btnEdit);
+      cell.appendChild(btnDelete);
     });
-  sumaSpan.textContent = total;
+
+  const sum = movements
+    .filter((movimiento) => movimiento.category === category)
+    .reduce((acc, cur) => acc + cur.amount, 0);
+
+  document.getElementById(`Sum${category}`).textContent = sum.toFixed(2);
 }
+
 function totalHeader() {
-  const pSum = document.getElementById(`balance-message`);
-  var totalSum = 0;
-  pSum.textContent = "";
-  var myClass = "";
-  movements.forEach((mov) => {
-    if (mov.category === "Income") {
-      totalSum = totalSum + parseFloat(mov.amount);
-    }
-    if (mov.category === "Outcome") {
-      totalSum = totalSum - parseFloat(mov.amount);
-    }
-  });
-  if (totalSum > 0) {
-    pSum.textContent = `You can still spend  ${totalSum.toFixed(2)} PLN`;
-    myClass = "green";
-  }
-  if (totalSum === 0) {
-    pSum.textContent = `Balance is zero`;
-  }
-  if (totalSum < 0) {
-    pSum.textContent = `The balance is negative. You lost ${Math.abs(
-      totalSum.toFixed(2)
-    )} PLN`;
-    myClass = "red";
-  }
-  pSum.classList.remove("red");
-  pSum.classList.remove("green");
-  if (myClass.length > 0) {
-    pSum.classList.add(myClass);
-  }
+  const totalIncome = movements
+    .filter((movimiento) => movimiento.category === "Income")
+    .reduce((acc, cur) => acc + cur.amount, 0);
+
+  const totalOutcome = movements
+    .filter((movimiento) => movimiento.category === "Outcome")
+    .reduce((acc, cur) => acc + cur.amount, 0);
+
+  const totalBalance = totalIncome - totalOutcome;
+  const balanceMessage = document.getElementById("balance-message");
+
+  balanceMessage.innerHTML = `Income: <span style="color:green">$${totalIncome.toFixed(2)}</span><br/>Outcome: <span style="color:red">$${totalOutcome.toFixed(2)}</span><br/>Balance: $${totalBalance.toFixed(2)}`;
 }
