@@ -152,5 +152,11 @@ function totalHeader() {
   const totalBalance = totalIncome - totalOutcome;
   const balanceMessage = document.getElementById("balance-message");
 
-  balanceMessage.innerHTML = `Income: <span style="color:green">$${totalIncome.toFixed(2)}</span><br/>Outcome: <span style="color:red">$${totalOutcome.toFixed(2)}</span><br/>Balance: $${totalBalance.toFixed(2)}`;
+  if (totalBalance > 0) {
+    balanceMessage.innerHTML = `You can still spend PLN ${totalBalance.toFixed(2)}`;
+  } else if (totalBalance === 0) {
+    balanceMessage.innerHTML = "Balance is zero.";
+  } else {
+    balanceMessage.innerHTML = `The balance is negative. You are down PLN ${Math.abs(totalBalance).toFixed(2)}.`;
+  }
 }
