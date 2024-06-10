@@ -7,18 +7,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const formEdit = document.getElementById("formEdit");
 
   formAdd.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault();
     addRow("Income");
   });
   formRest.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent form submission
+    event.preventDefault();
     addRow("Outcome");
   });
   formEdit.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent form submission
-
+    event.preventDefault();
     modifyRow();
-    // return false;
   });
   document.querySelectorAll(".decimal-input").forEach(function (input) {
     input.addEventListener("input", function (e) {
@@ -26,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const decimalRegex = /^\d*\.?\d{0,2}$/;
 
       if (!decimalRegex.test(value)) {
-        // Remove invalid characters
         e.target.value = value.slice(0, -1);
       }
     });
@@ -50,7 +47,7 @@ function addRow(category) {
     return false;
   }
 
-  let mov = {
+  const mov = {
     description: txtDescription.value,
     amount: txtAmount.value,
     id: Date.now(),
@@ -94,14 +91,7 @@ function modifyRow() {
   emptyValues(mov.category);
   totalHeader();
 
-  // Get the modal
   const modal = document.getElementById("myModal");
-
-  // Get the button that opens the modal
-  const btn = document.getElementById("openModal");
-
-  // Get the <span> element that closes the modal
-  const span = document.getElementsByClassName("close")[0];
 
   modal.style.display = "none";
 }
@@ -116,21 +106,12 @@ function editRow(id) {
   txtAmount.value = mov.amount;
   idEdit = mov.id;
 
-  // Get the modal
   const modal = document.getElementById("myModal");
 
-  // Get the button that opens the modal
-  const btn = document.getElementById("openModal");
-
-  // Get the <span> element that closes the modal
   const span = document.getElementsByClassName("close")[0];
 
-  // When the user clicks the button, open the modal
-  // btn.onclick = function () {
   modal.style.display = "block";
-  // }
 
-  // When the user clicks on <span> (x), close the modal
   span.onclick = function () {
     modal.style.display = "none";
   };
@@ -139,7 +120,7 @@ function deleteRow(id) {
   const category = movements.find((mov) => mov.id === id).category;
   const index = movements.findIndex((mov) => mov.id === id);
   const confirmation = confirm(
-    "¿Are you sure that you want to delete the register?"
+    "Are you sure that you want to delete the register?"
   );
 
   if (index !== -1 && confirmation) {
@@ -157,8 +138,8 @@ function refreshTable(category) {
   const sumaSpan = document.getElementById(`Sum${category}`);
 
   let total = 0;
-  tblValues.textContent = "";
-  sumaSpan.textContent = "";
+  tblValues.innerHTML = "";
+  sumaSpan.innerHTML = "";
 
   movements
     .filter((mov) => mov.category === category)
@@ -172,10 +153,12 @@ function refreshTable(category) {
       const actionsCell = document.createElement("td");
       const editButton = document.createElement("button");
       editButton.textContent = "Edit";
+      editButton.classList.add("button");
       editButton.addEventListener("click", () => editRow(mov.id, category));
 
       const deleteButton = document.createElement("button");
       deleteButton.textContent = "Delete";
+      deleteButton.classList.add("button");
       deleteButton.addEventListener("click", () => deleteRow(mov.id));
 
       actionsCell.appendChild(editButton);
